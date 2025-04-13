@@ -1,0 +1,5 @@
+/* /index.html 200
+
+# Domain-specific redirects
+https://zk-ai.de/* https://zk-ai.agency/de/:splat 301!
+https://www.zk-ai.de/* https://zk-ai.agency/de/:splat 301!

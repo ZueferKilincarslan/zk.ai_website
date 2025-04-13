@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <!-- Homepage -->
+  <url>
+    <loc>https://zk-ai.agency/en</loc>
+    <lastmod>2025-02-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://zk-ai.agency/en"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://zk-ai.agency/de"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://zk-ai.agency/en"/>
+  </url>
+  <url>
+    <loc>https://zk-ai.agency/de</loc>
+    <lastmod>2025-02-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://zk-ai.agency/en"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://zk-ai.agency/de"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://zk-ai.agency/en"/>
+  </url>
+
+  <!-- About -->
+  <url>
+    <loc>https://zk-ai.agency/en/about</loc>
+    <lastmod>2025-02-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://zk-ai.agency/en/about"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://zk-ai.agency/de/about"/>
+  </url>
+  <url>
+    <loc>https://zk-ai.agency/de/about</loc>
+    <lastmod>2025-02-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://zk-ai.agency/en/about"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://zk-ai.agency/de/about"/>
+  </url>
+
+  <!-- Contact -->
+  <url>
+    <loc>https://zk-ai.agency/en/contact</loc>
+    <lastmod>2025-02-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://zk-ai.agency/en/contact"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://zk-ai.agency/de/contact"/>
+  </url>
+  <url>
+    <loc>https://zk-ai.agency/de/contact</loc>
+    <lastmod>2025-02-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://zk-ai.agency/en/contact"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://zk-ai.agency/de/contact"/>
+  </url>
+
+  <!-- FAQ -->
+  <url>
+    <loc>https://zk-ai.agency/en/faq</loc>
+    <lastmod>2025-02-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://zk-ai.agency/en/faq"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://zk-ai.agency/de/faq"/>
+  </url>
+  <url>
+    <loc>https://zk-ai.agency/de/faq</loc>
+    <lastmod>2025-02-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://zk-ai.agency/en/faq"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://zk-ai.agency/de/faq"/>
+  </url>
+
+  <!-- Privacy -->
+  <url>
+    <loc>https://zk-ai.agency/en/privacy</loc>
+    <lastmod>2025-02-20</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://zk-ai.agency/en/privacy"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://zk-ai.agency/de/privacy"/>
+  </url>
+  <url>
+    <loc>https://zk-ai.agency/de/privacy</loc>
+    <lastmod>2025-02-20</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://zk-ai.agency/en/privacy"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://zk-ai.agency/de/privacy"/>
+  </url>
+
+  <!-- Terms -->
+  <url>
+    <loc>https://zk-ai.agency/en/terms</loc>
+    <lastmod>2025-02-20</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://zk-ai.agency/en/terms"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://zk-ai.agency/de/terms"/>
+  </url>
+  <url>
+    <loc>https://zk-ai.agency/de/terms</loc>
+    <lastmod>2025-02-20</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://zk-ai.agency/en/terms"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://zk-ai.agency/de/terms"/>
+  </url>
+
+  <!-- Impressum -->
+  <url>
+    <loc>https://zk-ai.agency/en/impressum</loc>
+    <lastmod>2025-02-20</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://zk-ai.agency/en/impressum"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://zk-ai.agency/de/impressum"/>
+  </url>
+  <url>
+    <loc>https://zk-ai.agency/de/impressum</loc>
+    <lastmod>2025-02-20</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://zk-ai.agency/en/impressum"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://zk-ai.agency/de/impressum"/>
+  </url>
+
+  <!-- Waitlist -->
+  <url>
+    <loc>https://zk-ai.agency/en/waitlist</loc>
+    <lastmod>2025-02-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://zk-ai.agency/en/waitlist"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://zk-ai.agency/de/waitlist"/>
+  </url>
+  <url>
+    <loc>https://zk-ai.agency/de/waitlist</loc>
+    <lastmod>2025-02-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://zk-ai.agency/en/waitlist"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://zk-ai.agency/de/waitlist"/>
+  </url>
+</urlset>
