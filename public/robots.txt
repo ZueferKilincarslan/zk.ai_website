@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+
+# Explicitly allow Voiceflow and other AI tools
+User-agent: VoiceflowBot
+Allow: /
+Allow: /en/*
+Allow: /de/*
+
+# Prevent duplicate content indexing
+Disallow: /?
+Disallow: /*?
+
+# Sitemap location
+Sitemap: https://zk-ai.agency/sitemap.xml
