@@ -6,10 +6,16 @@
   html {
     scroll-behavior: smooth;
     scroll-padding-top: 4rem;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+    width: 100%;
+    position: relative;
   }
   
   body {
     @apply bg-black text-white;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+    width: 100%;
+    position: relative;
   }
 }
 
@@ -41,6 +47,15 @@
 
   .pulse-animation {
     animation: pulse-subtle 2s infinite;
+  }
+
+  /* Mobile-specific utilities */
+  @media (max-width: 640px) {
+    .mobile-safe-padding {
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
   }
 }
 
@@ -95,4 +110,21 @@
   @apply bg-purple-500/10;
   transform: translateY(-2px);
   box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
+}
+
+/* Mobile optimization for Tixae widget */
+@media (max-width: 640px) {
+  #VG_OVERLAY_CONTAINER {
+    z-index: 9999 !important;
+  }
+
+  .vg-widget-container {
+    bottom: env(safe-area-inset-bottom) !important;
+    right: env(safe-area-inset-right) !important;
+  }
+
+  .vg-widget-button {
+    width: 48px !important;
+    height: 48px !important;
+  }
 }
