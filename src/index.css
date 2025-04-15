@@ -9,6 +9,7 @@
     overflow-x: hidden; /* Prevent horizontal scrolling */
     width: 100%;
     position: relative;
+    -webkit-text-size-adjust: 100%; /* Prevent text size adjustment on orientation change */
   }
   
   body {
@@ -16,6 +17,14 @@
     overflow-x: hidden; /* Prevent horizontal scrolling */
     width: 100%;
     position: relative;
+    min-height: -webkit-fill-available; /* Fix for mobile Chrome viewport height */
+  }
+
+  /* Fix for mobile Chrome 100vh issue */
+  @supports (-webkit-touch-callout: none) {
+    .min-h-screen {
+      min-height: -webkit-fill-available;
+    }
   }
 }
 
@@ -93,6 +102,7 @@
 .button-primary {
   @apply px-6 py-3 bg-purple-700 text-white rounded-lg transition-all duration-300;
   box-shadow: 0 0 0 rgba(168, 85, 247, 0);
+  -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
 }
 
 .button-primary:hover {
@@ -104,6 +114,7 @@
 .button-secondary {
   @apply px-6 py-3 border border-purple-500 text-white rounded-lg transition-all duration-300;
   box-shadow: 0 0 0 rgba(168, 85, 247, 0);
+  -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
 }
 
 .button-secondary:hover {
@@ -116,15 +127,35 @@
 @media (max-width: 640px) {
   #VG_OVERLAY_CONTAINER {
     z-index: 9999 !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    right: 0 !important;
+    width: auto !important;
+    height: auto !important;
   }
 
   .vg-widget-container {
     bottom: env(safe-area-inset-bottom) !important;
     right: env(safe-area-inset-right) !important;
+    position: fixed !important;
+    width: auto !important;
+    height: auto !important;
   }
 
   .vg-widget-button {
     width: 48px !important;
     height: 48px !important;
+    margin: 16px !important;
+    -webkit-transform: translateZ(0); /* Force hardware acceleration */
+    transform: translateZ(0);
+    will-change: transform; /* Optimize animations */
+  }
+
+  /* Fix for notched displays */
+  @supports (padding: max(0px)) {
+    .vg-widget-container {
+      padding-bottom: max(env(safe-area-inset-bottom), 16px) !important;
+      padding-right: max(env(safe-area-inset-right), 16px) !important;
+    }
   }
 }
