@@ -32,8 +32,12 @@ export const TixaeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (!container) {
       container = document.createElement('div');
       container.id = 'VG_OVERLAY_CONTAINER';
-      container.style.width = '0';
-      container.style.height = '0';
+      container.style.position = 'fixed';
+      container.style.bottom = '0';
+      container.style.right = '0';
+      container.style.width = 'auto';
+      container.style.height = 'auto';
+      container.style.zIndex = '9999';
       document.body.appendChild(container);
     }
 
