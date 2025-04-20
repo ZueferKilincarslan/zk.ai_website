@@ -49,7 +49,7 @@ const Impressum: React.FC = () => {
                   <h2 className="text-2xl font-bold mb-4">Company Information</h2>
                   <div className="text-gray-300 space-y-2">
                     <p>ZK.AI Automation & AI Solutions</p>
-                    <p>Owner: Hüseyin Züfer Kilincarslan</p>
+                    <p>Owner: Emirkan Tekin</p>
                   </div>
                 </div>
               </div>
