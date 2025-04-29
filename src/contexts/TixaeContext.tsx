@@ -13,6 +13,7 @@ export const useTixae = () => useContext(TixaeContext);
 
 export const TixaeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
+  const isDashboard = location.pathname.includes('/admin/dashboard');
   const isDemo = location.pathname.includes('/admin/demo');
 
   useEffect(() => {
@@ -50,7 +51,7 @@ export const TixaeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     script.textContent = `
       (function() {
         window.VG_CONFIG = {
-          ID: "${isDemo ? 'dldb6xcly75l06qq' : 'ux5puvqrx8jlan6n'}", // Different IDs for demo/production
+          ID: "${isDashboard ? 'dldb6xcly75l06qq' : isDemo ? 'dldb6xcly75l06qq' : 'ux5puvqrx8jlan6n'}", // Different IDs for dashboard/demo/production
           region: 'eu',
           render: 'bottom-right',
           modalMode: ${isDemo},
@@ -107,7 +108,7 @@ export const TixaeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }
       // Don't remove the container on cleanup as it's reused
     };
-  }, [isDemo]);
+  }, [isDashboard, isDemo]);
 
   return (
     <TixaeContext.Provider value={{ isDemo }}>

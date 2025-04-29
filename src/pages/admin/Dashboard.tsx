@@ -1,7 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
-import { LogOut, Users, MessageSquare, Calendar, PlayCircle } from 'lucide-react';
+import { LogOut, Users, MessageSquare, Calendar, Store, Layout } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -24,6 +24,23 @@ const Dashboard: React.FC = () => {
     { icon: Calendar, label: 'Appointments', value: '23' },
   ];
 
+  const demos = [
+    {
+      id: 1,
+      title: 'E-Commerce Demo',
+      description: 'Modern e-commerce site with integrated chatbot',
+      icon: Store,
+      path: '/admin/demo/1'
+    },
+    {
+      id: 2,
+      title: 'Landing Page Demo',
+      description: 'Standalone landing page with chatbot integration',
+      icon: Layout,
+      path: '/admin/demo/2'
+    }
+  ];
+
   return (
     <div className="min-h-screen gradient-bg">
       <Helmet>
@@ -37,25 +54,14 @@ const Dashboard: React.FC = () => {
             <p className="text-gray-400">{user?.email}</p>
           </div>
 
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => navigate('/admin/demo')}
-              className="flex items-center gap-2 px-4 py-2 bg-purple-500/10 text-purple-400 rounded-lg
-                hover:bg-purple-500/20 transition-colors duration-300"
-            >
-              <PlayCircle className="w-5 h-5" />
-              Demo
-            </button>
-
-            <button
-              onClick={handleSignOut}
-              className="flex items-center gap-2 px-4 py-2 bg-red-500/10 text-red-400 rounded-lg
-                hover:bg-red-500/20 transition-colors duration-300"
-            >
-              <LogOut className="w-5 h-5" />
-              Sign Out
-            </button>
-          </div>
+          <button
+            onClick={handleSignOut}
+            className="flex items-center gap-2 px-4 py-2 bg-red-500/10 text-red-400 rounded-lg
+              hover:bg-red-500/20 transition-colors duration-300"
+          >
+            <LogOut className="w-5 h-5" />
+            Sign Out
+          </button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -81,8 +87,31 @@ const Dashboard: React.FC = () => {
         </div>
 
         <div className="bg-black/30 backdrop-blur-lg rounded-xl p-8 border border-purple-500/20">
-          <h2 className="text-2xl font-bold mb-6">Recent Activity</h2>
-          <p className="text-gray-400">No recent activity to display.</p>
+          <h2 className="text-2xl font-bold mb-6">Demo Sites</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {demos.map((demo, index) => (
+              <motion.div
+                key={demo.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="group bg-black/40 rounded-xl p-6 hover:bg-black/50 transition-all duration-300 cursor-pointer"
+                onClick={() => navigate(demo.path)}
+              >
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-lg bg-purple-500/20 flex items-center justify-center">
+                    <demo.icon className="w-6 h-6 text-purple-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold group-hover:text-purple-400 transition-colors">
+                      {demo.title}
+                    </h3>
+                    <p className="text-gray-400 mt-1">{demo.description}</p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
 

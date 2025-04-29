@@ -28,7 +28,8 @@ import FAQDE from './pages/de/FAQ';
 // Admin pages
 import Login from './pages/admin/Login';
 import Dashboard from './pages/admin/Dashboard';
-import Demo from './pages/admin/Demo';
+import Demo1 from './pages/admin/Demo1';
+import Demo2 from './pages/admin/Demo2';
 
 const App: React.FC = () => {
   const navigate = useNavigate();
@@ -55,14 +56,6 @@ const App: React.FC = () => {
     }
   }, [location, navigate]);
 
-  // Admin routes component to avoid repetition
-  const AdminRoutes = () => (
-    <Routes>
-      <Route path="dashboard" element={<Dashboard />} />
-      <Route path="demo" element={<Demo />} />
-    </Routes>
-  );
-
   return (
     <AuthProvider>
       <LanguageProvider>
@@ -82,7 +75,11 @@ const App: React.FC = () => {
               path="/en/admin/*"
               element={
                 <ProtectedRoute>
-                  <AdminRoutes />
+                  <Routes>
+                    <Route path="dashboard" element={<Dashboard />} />
+                    <Route path="demo/1" element={<Demo1 />} />
+                    <Route path="demo/2" element={<Demo2 />} />
+                  </Routes>
                 </ProtectedRoute>
               }
             />
@@ -101,7 +98,11 @@ const App: React.FC = () => {
               path="/de/admin/*"
               element={
                 <ProtectedRoute>
-                  <AdminRoutes />
+                  <Routes>
+                    <Route path="dashboard" element={<Dashboard />} />
+                    <Route path="demo/1" element={<Demo1 />} />
+                    <Route path="demo/2" element={<Demo2 />} />
+                  </Routes>
                 </ProtectedRoute>
               }
             />
@@ -112,7 +113,11 @@ const App: React.FC = () => {
               path="/admin/*"
               element={
                 <ProtectedRoute>
-                  <AdminRoutes />
+                  <Routes>
+                    <Route path="dashboard" element={<Dashboard />} />
+                    <Route path="demo/1" element={<Demo1 />} />
+                    <Route path="demo/2" element={<Demo2 />} />
+                  </Routes>
                 </ProtectedRoute>
               }
             />
