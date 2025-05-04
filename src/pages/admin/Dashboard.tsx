@@ -1,13 +1,34 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
 import { LogOut, Users, MessageSquare, Calendar, Store, Layout } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { getMonthlyUsers } from '../../services/supabase';
+import AnalyticsChart from '../../components/AnalyticsChart';
 
 const Dashboard: React.FC = () => {
   const { signOut, user } = useAuth();
   const navigate = useNavigate();
+  const [analyticsData, setAnalyticsData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        const data = await getMonthlyUsers();
+        setAnalyticsData(data);
+      } catch (err) {
+        setError('Failed to load analytics data');
+        console.error('Analytics error:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAnalytics();
+  }, []);
 
   const handleSignOut = async () => {
     try {
@@ -40,6 +61,10 @@ const Dashboard: React.FC = () => {
       path: '/admin/demo/2'
     }
   ];
+
+  const openDemoInNewTab = (path: string) => {
+    window.open(path, '_blank');
+  };
 
   return (
     <div className="min-h-screen gradient-bg">
@@ -86,6 +111,26 @@ const Dashboard: React.FC = () => {
           ))}
         </div>
 
+        {/* Analytics Chart */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="mb-8"
+        >
+          {loading ? (
+            <div className="w-full h-[400px] bg-black/30 backdrop-blur-lg rounded-xl p-6 flex items-center justify-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-500"></div>
+            </div>
+          ) : error ? (
+            <div className="w-full bg-black/30 backdrop-blur-lg rounded-xl p-6 text-center text-red-400">
+              {error}
+            </div>
+          ) : (
+            <AnalyticsChart data={analyticsData} />
+          )}
+        </motion.div>
+
         <div className="bg-black/30 backdrop-blur-lg rounded-xl p-8 border border-purple-500/20">
           <h2 className="text-2xl font-bold mb-6">Demo Sites</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -96,7 +141,7 @@ const Dashboard: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
                 className="group bg-black/40 rounded-xl p-6 hover:bg-black/50 transition-all duration-300 cursor-pointer"
-                onClick={() => navigate(demo.path)}
+                onClick={() => openDemoInNewTab(demo.path)}
               >
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 rounded-lg bg-purple-500/20 flex items-center justify-center">
