@@ -1,12 +1,9 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
-import { ArrowLeft, ShoppingCart, Star, Package } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { ShoppingCart, Star, Package } from 'lucide-react';
 
 const Demo1: React.FC = () => {
-  const navigate = useNavigate();
-
   const products = [
     {
       id: 1,
@@ -41,16 +38,7 @@ const Demo1: React.FC = () => {
       <nav className="bg-white shadow-lg">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
-            <div className="flex items-center gap-8">
-              <button
-                onClick={() => navigate('/admin/dashboard')}
-                className="text-blue-600 hover:text-blue-800 flex items-center gap-2 transition-colors"
-              >
-                <ArrowLeft className="w-5 h-5" />
-                Back to Dashboard
-              </button>
-              <h1 className="text-2xl font-bold text-blue-900">TechHub</h1>
-            </div>
+            <h1 className="text-2xl font-bold text-blue-900">TechHub</h1>
             <div className="flex items-center gap-4">
               <button className="p-2 text-blue-600 hover:text-blue-800 relative">
                 <ShoppingCart className="w-6 h-6" />

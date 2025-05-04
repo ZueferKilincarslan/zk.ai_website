@@ -1,12 +1,9 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
-import { ArrowLeft, CheckCircle2, ArrowRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { CheckCircle2, ArrowRight } from 'lucide-react';
 
 const Demo2: React.FC = () => {
-  const navigate = useNavigate();
-
   const features = [
     'Advanced Analytics Dashboard',
     'Real-time Data Synchronization',
@@ -26,13 +23,6 @@ const Demo2: React.FC = () => {
       <nav className="bg-white shadow-lg">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
-            <button
-              onClick={() => navigate('/admin/dashboard')}
-              className="text-emerald-600 hover:text-emerald-800 flex items-center gap-2 transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              Back to Dashboard
-            </button>
             <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-purple-600 text-transparent bg-clip-text">
               DataFlow
             </h1>
