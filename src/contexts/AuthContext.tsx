@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -18,7 +18,33 @@ export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // Check for existing session on mount
+  useEffect(() => {
+    const checkSession = () => {
+      const sessionData = localStorage.getItem('adminSession');
+      if (sessionData) {
+        try {
+          const { expiresAt } = JSON.parse(sessionData);
+          if (new Date().getTime() < expiresAt) {
+            setIsAuthenticated(true);
+          } else {
+            // Session expired
+            localStorage.removeItem('adminSession');
+            setIsAuthenticated(false);
+          }
+        } catch (error) {
+          console.error('Error parsing session data:', error);
+          localStorage.removeItem('adminSession');
+          setIsAuthenticated(false);
+        }
+      }
+      setLoading(false);
+    };
+
+    checkSession();
+  }, []);
 
   const signIn = async (email: string, password: string) => {
     setLoading(true);
@@ -31,6 +57,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       if (email === adminEmail && password === adminPassword) {
+        // Set session with 5-minute expiration
+        const expiresAt = new Date().getTime() + (5 * 60 * 1000); // 5 minutes
+        localStorage.setItem('adminSession', JSON.stringify({ expiresAt }));
         setIsAuthenticated(true);
       } else {
         throw new Error('Invalid credentials');
@@ -43,6 +72,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signOut = () => {
+    localStorage.removeItem('adminSession');
     setIsAuthenticated(false);
   };
 
