@@ -155,8 +155,25 @@
       }
     </script>
 
-    <script id="vtag-ai-js" async src="https://r2.leadsy.ai/tag.js" data-pid="1hNUjUs60DazBUOxk" data-version="062024">
-      </script>
+    <!-- Leadsy.ai Script with Error Handling -->
+    <script>
+      (function loadLeadsyScript() {
+        const script = document.createElement('script');
+        script.id = 'vtag-ai-js';
+        script.src = 'https://r2.leadsy.ai/tag.js';
+        script.async = true;
+        script.setAttribute('data-pid', '1hNUjUs60DazBUOxk');
+        script.setAttribute('data-version', '062024');
+        
+        script.onerror = function(error) {
+          console.warn('Leadsy.ai script failed to load:', error);
+          // Optionally retry loading after a delay
+          setTimeout(loadLeadsyScript, 5000);
+        };
+        
+        document.head.appendChild(script);
+      })();
+    </script>
   </head>
   <body>
     <!-- Pre-rendered content for scrapers -->

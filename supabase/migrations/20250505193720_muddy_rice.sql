@@ -1,0 +1,1 @@
+-- This migration has been removed as it was only used for analytics
