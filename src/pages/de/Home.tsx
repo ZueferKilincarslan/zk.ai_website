@@ -38,6 +38,13 @@ const services = [
     image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&h=400&fit=crop&q=80'
   },
   {
+    icon: Bot,
+    title: 'ZK Agent',
+    description: 'Unser fortschrittlichster KI-Agent für umfassende Geschäftsautomatisierung.',
+    image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=600&h=400&fit=crop&q=80',
+    link: '/de/zkagent'
+  },
+  {
     icon: Code,
     title: 'KI-gesteuerte Website-Erstellung',
     description: 'Erstellen Sie beeindruckende, animierte Websites mit Frontend- und Backend-Funktionalität.',
@@ -240,6 +247,15 @@ const Home: React.FC = () => {
                           <h3 className="text-2xl lg:text-3xl font-bold">{service.title}</h3>
                         </div>
                         <p className="text-gray-300 text-lg lg:text-xl">{service.description}</p>
+                        {service.link && (
+                          <Link
+                            to={service.link}
+                            className="inline-flex items-center gap-2 text-purple-400 hover:text-purple-300 transition-colors"
+                          >
+                            Mehr erfahren
+                            <ArrowRight className="w-5 h-5" />
+                          </Link>
+                        )}
                       </div>
                     </div>
                   </div>

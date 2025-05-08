@@ -38,6 +38,13 @@ const services = [
     image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&h=400&fit=crop&q=80'
   },
   {
+    icon: Bot,
+    title: 'ZK Agent',
+    description: 'Our most advanced AI agent for comprehensive business automation.',
+    image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=600&h=400&fit=crop&q=80',
+    link: '/en/zkagent'
+  },
+  {
     icon: Code,
     title: 'AI-Powered Website Creation',
     description: 'Create stunning, animated websites with both frontend and backend functionality.',
@@ -217,9 +224,46 @@ const Home: React.FC = () => {
               ))}
             </div>
 
+            {/* ZK Agent */}
+            <div className="mt-12">
+              {services.slice(3, 4).map((service, index) => (
+                <Link
+                  key={index}
+                  to={service.link}
+                  className="block group relative bg-black/30 backdrop-blur-lg rounded-xl overflow-hidden hover:transform hover:scale-105 transition-all duration-300"
+                >
+                  <div className="grid grid-cols-1 lg:grid-cols-2">
+                    <div className="h-64 lg:h-96 overflow-hidden">
+                      <img 
+                        src={service.image}
+                        alt={service.title}
+                        className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-300"
+                      />
+                    </div>
+                    
+                    <div className="p-8 lg:p-12 flex flex-col justify-center">
+                      <div className="space-y-6">
+                        <div className="flex items-center gap-4">
+                          <service.icon className="w-8 h-8 text-purple-400" />
+                          <h3 className="text-2xl lg:text-3xl font-bold">{service.title}</h3>
+                        </div>
+                        <p className="text-gray-300 text-lg lg:text-xl">{service.description}</p>
+                        <div className="flex items-center gap-2 text-purple-400">
+                          <span>Learn more</span>
+                          <ArrowRight className="w-5 h-5" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                </Link>
+              ))}
+            </div>
+
             {/* Featured service (Website Creation) */}
             <div className="mt-12">
-              {services.slice(3).map((service, index) => (
+              {services.slice(4).map((service, index) => (
                 <div
                   key={index}
                   className="group relative bg-black/30 backdrop-blur-lg rounded-xl overflow-hidden hover:transform hover:scale-105 transition-all duration-300"
