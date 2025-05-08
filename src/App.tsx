@@ -14,6 +14,7 @@ import TermsEN from './pages/en/Terms';
 import ImpressumEN from './pages/en/Impressum';
 import WaitlistEN from './pages/en/Waitlist';
 import FAQEN from './pages/en/FAQ';
+import ZKAgentEN from './pages/en/ZKAgent';
 
 // German pages
 import HomeDE from './pages/de/Home';
@@ -24,6 +25,7 @@ import TermsDE from './pages/de/Terms';
 import ImpressumDE from './pages/de/Impressum';
 import WaitlistDE from './pages/de/Waitlist';
 import FAQDE from './pages/de/FAQ';
+import ZKAgentDE from './pages/de/ZKAgent';
 
 // Admin pages
 import Login from './pages/admin/Login';
@@ -70,6 +72,7 @@ const App: React.FC = () => {
             <Route path="/en/impressum" element={<ImpressumEN />} />
             <Route path="/en/waitlist" element={<WaitlistEN />} />
             <Route path="/en/faq" element={<FAQEN />} />
+            <Route path="/en/zkagent" element={<ZKAgentEN />} />
             <Route path="/en/admin" element={<Login />} />
             <Route
               path="/en/admin/*"
@@ -93,6 +96,7 @@ const App: React.FC = () => {
             <Route path="/de/impressum" element={<ImpressumDE />} />
             <Route path="/de/waitlist" element={<WaitlistDE />} />
             <Route path="/de/faq" element={<FAQDE />} />
+            <Route path="/de/zkagent" element={<ZKAgentDE />} />
             <Route path="/de/admin" element={<Login />} />
             <Route
               path="/de/admin/*"
