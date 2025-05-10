@@ -1,17 +1,19 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { supabase } from '../services/supabase';
+import { Session } from '@supabase/supabase-js';
 
 interface AuthContextType {
   isAuthenticated: boolean;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
-  signOut: () => void;
+  signOut: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   loading: false,
   signIn: async () => {},
-  signOut: () => {},
+  signOut: async () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -20,60 +22,53 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Check for existing session on mount
   useEffect(() => {
-    const checkSession = () => {
-      const sessionData = localStorage.getItem('adminSession');
-      if (sessionData) {
-        try {
-          const { expiresAt } = JSON.parse(sessionData);
-          if (new Date().getTime() < expiresAt) {
-            setIsAuthenticated(true);
-          } else {
-            // Session expired
-            localStorage.removeItem('adminSession');
-            setIsAuthenticated(false);
-          }
-        } catch (error) {
-          console.error('Error parsing session data:', error);
-          localStorage.removeItem('adminSession');
-          setIsAuthenticated(false);
-        }
-      }
+    // Check for existing session
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setIsAuthenticated(!!session);
       setLoading(false);
-    };
+    });
 
-    checkSession();
+    // Initial session check
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsAuthenticated(!!session);
+      setLoading(false);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signIn = async (email: string, password: string) => {
     setLoading(true);
     try {
-      const adminEmail = import.meta.env.VITE_ADMIN_EMAIL;
-      const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD;
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-      if (!adminEmail || !adminPassword) {
-        throw new Error('Admin credentials not configured');
+      if (error) {
+        throw error;
       }
-
-      if (email === adminEmail && password === adminPassword) {
-        // Set session with 5-minute expiration
-        const expiresAt = new Date().getTime() + (5 * 60 * 1000); // 5 minutes
-        localStorage.setItem('adminSession', JSON.stringify({ expiresAt }));
-        setIsAuthenticated(true);
-      } else {
-        throw new Error('Invalid credentials');
-      }
-    } catch (error) {
-      throw error;
+    } catch (error: any) {
+      throw new Error(error.message || 'Failed to sign in');
     } finally {
       setLoading(false);
     }
   };
 
-  const signOut = () => {
-    localStorage.removeItem('adminSession');
-    setIsAuthenticated(false);
+  const signOut = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        throw error;
+      }
+      setIsAuthenticated(false);
+    } catch (error: any) {
+      console.error('Error signing out:', error);
+      throw error;
+    }
   };
 
   return (
