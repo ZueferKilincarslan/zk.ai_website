@@ -3,12 +3,13 @@ import { Menu, X, ExternalLink } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useTranslatedContent } from '../hooks/useTranslatedContent';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { currentLanguage, setLanguage } = useLanguage();
+  const { currentLanguage } = useLanguage();
   const { t } = useTranslatedContent();
 
   const navItems = [
@@ -18,13 +19,6 @@ const Navbar = () => {
     { id: 'pricing', name: t['pricing'], href: '#pricing' },
     { id: 'faq', name: t['faq'], href: `/${currentLanguage}/faq`, isPage: true }
   ];
-
-  const switchLanguage = (lang: 'en' | 'de') => {
-    const currentPath = location.pathname.replace(/^\/(en|de)/, '');
-    navigate(`/${lang}${currentPath}`);
-    setLanguage(lang);
-    localStorage.setItem('preferredLanguage', lang);
-  };
 
   const scrollToSection = (href: string) => {
     if (href.startsWith('/')) {
@@ -107,60 +101,12 @@ const Navbar = () => {
             </Link>
 
             {/* Language Switcher */}
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => switchLanguage('en')}
-                className={`flex items-center gap-1 px-2 py-1 rounded-md transition-all duration-300 ${
-                  currentLanguage === 'en'
-                    ? 'bg-purple-500/20 text-purple-400'
-                    : 'hover:bg-purple-500/10 text-gray-400 hover:text-white'
-                }`}
-                aria-label="Switch to English"
-              >
-                🇬🇧 EN
-              </button>
-              <span className="text-gray-600">|</span>
-              <button
-                onClick={() => switchLanguage('de')}
-                className={`flex items-center gap-1 px-2 py-1 rounded-md transition-all duration-300 ${
-                  currentLanguage === 'de'
-                    ? 'bg-purple-500/20 text-purple-400'
-                    : 'hover:bg-purple-500/10 text-gray-400 hover:text-white'
-                }`}
-                aria-label="Switch to German"
-              >
-                🇩🇪 DE
-              </button>
-            </div>
+            <LanguageSwitcher />
           </div>
 
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => switchLanguage('en')}
-                className={`flex items-center gap-1 px-2 py-1 rounded-md transition-all duration-300 ${
-                  currentLanguage === 'en'
-                    ? 'bg-purple-500/20 text-purple-400'
-                    : 'hover:bg-purple-500/10 text-gray-400 hover:text-white'
-                }`}
-                aria-label="Switch to English"
-              >
-                🇬🇧
-              </button>
-              <span className="text-gray-600">|</span>
-              <button
-                onClick={() => switchLanguage('de')}
-                className={`flex items-center gap-1 px-2 py-1 rounded-md transition-all duration-300 ${
-                  currentLanguage === 'de'
-                    ? 'bg-purple-500/20 text-purple-400'
-                    : 'hover:bg-purple-500/10 text-gray-400 hover:text-white'
-                }`}
-                aria-label="Switch to German"
-              >
-                🇩🇪
-              </button>
-            </div>
+            <LanguageSwitcher />
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="text-gray-300 hover:text-white"

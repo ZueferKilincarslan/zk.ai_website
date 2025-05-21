@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-type Language = 'en' | 'de';
+type Language = 'en' | 'de' | 'tr';
 
 interface LanguageContextType {
   currentLanguage: Language;
@@ -21,7 +21,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [currentLanguage, setCurrentLanguage] = useState<Language>(() => {
     // Initialize with path language if available
     const pathLanguage = location.pathname.split('/')[1];
-    if (pathLanguage === 'en' || pathLanguage === 'de') {
+    if (pathLanguage === 'en' || pathLanguage === 'de' || pathLanguage === 'tr') {
       return pathLanguage;
     }
     
@@ -31,9 +31,14 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       return storedLanguage;
     }
 
-    // Default to browser language
+    // Default to browser language or geolocation
     const browserLanguage = navigator.language.toLowerCase();
-    return ['de', 'de-de', 'de-at', 'de-ch'].includes(browserLanguage) ? 'de' : 'en';
+    if (['de', 'de-de', 'de-at', 'de-ch'].includes(browserLanguage)) {
+      return 'de';
+    } else if (['tr', 'tr-tr'].includes(browserLanguage)) {
+      return 'tr';
+    }
+    return 'en';
   });
 
   useEffect(() => {
@@ -48,14 +53,14 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       }
 
       // If the path has a language prefix that doesn't match current language
-      if ((pathLanguage === 'en' || pathLanguage === 'de') && pathLanguage !== currentLanguage) {
+      if ((pathLanguage === 'en' || pathLanguage === 'de' || pathLanguage === 'tr') && pathLanguage !== currentLanguage) {
         setCurrentLanguage(pathLanguage);
         localStorage.setItem('preferredLanguage', pathLanguage);
         return;
       }
 
       // If the path has no language prefix
-      if (pathLanguage !== 'en' && pathLanguage !== 'de') {
+      if (pathLanguage !== 'en' && pathLanguage !== 'de' && pathLanguage !== 'tr') {
         const targetLanguage = currentLanguage;
         const newPath = `/${targetLanguage}${location.pathname}${location.search}${location.hash}`;
         navigate(newPath, { replace: true });
@@ -70,7 +75,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     localStorage.setItem('preferredLanguage', lang);
     
     // Update the URL to reflect the new language
-    const currentPath = location.pathname.replace(/^\/(en|de)/, '');
+    const currentPath = location.pathname.replace(/^\/(en|de|tr)/, '');
     const newPath = `/${lang}${currentPath || ''}${location.search}${location.hash}`;
     navigate(newPath, { replace: true });
   };
