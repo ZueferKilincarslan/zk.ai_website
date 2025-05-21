@@ -11,7 +11,7 @@ interface WaitlistData {
   fullName: string;
   email: string;
   services: string[];
-  language?: 'en' | 'de'; // Add language field
+  language?: 'en' | 'de' | 'tr';
 }
 
 // Map of service IDs to their exact Airtable field option names
@@ -104,7 +104,7 @@ export const submitToWaitlist = async (waitlistData: WaitlistData): Promise<void
           Name: waitlistData.fullName,
           Email: waitlistData.email,
           Services: mappedServices,
-          Language: waitlistData.language || 'en' // Add language field to Airtable record
+          Language: waitlistData.language || 'en'
         }
       }
     ]);
