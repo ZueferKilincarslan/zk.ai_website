@@ -1,8 +1,10 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
+const SESSION_TIMEOUT = 5 * 60 * 1000; // 5 minutes in milliseconds
+
 export const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, loading, lastLoginTime } = useAuth();
   const location = useLocation();
 
   if (loading) {
@@ -13,7 +15,11 @@ export const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ childr
     );
   }
 
-  if (!isAuthenticated) {
+  // Check if session has expired (more than 5 minutes since last login)
+  const isSessionExpired = lastLoginTime && (Date.now() - lastLoginTime > SESSION_TIMEOUT);
+
+  if (!isAuthenticated || isSessionExpired) {
+    // Redirect to login page with the return url
     return <Navigate to="/admin" state={{ from: location }} replace />;
   }
 
