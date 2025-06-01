@@ -14,7 +14,7 @@ interface Countdown {
 }
 
 const Dashboard: React.FC = () => {
-  const { signOut } = useAuth();
+  const { signOut, lastLoginTime } = useAuth();
   const navigate = useNavigate();
   const [countdowns, setCountdowns] = useState<Countdown[]>([]);
   const [newCountdown, setNewCountdown] = useState({
@@ -22,6 +22,7 @@ const Dashboard: React.FC = () => {
     target_date: ''
   });
   const [error, setError] = useState<string | null>(null);
+  const SESSION_TIMEOUT = 5 * 60 * 1000; // 5 minutes in milliseconds
 
   useEffect(() => {
     fetchCountdowns();
@@ -41,6 +42,19 @@ const Dashboard: React.FC = () => {
       subscription.unsubscribe();
     };
   }, []);
+
+  useEffect(() => {
+    // Set up interval to check session expiry
+    const checkSession = () => {
+      if (lastLoginTime && (Date.now() - lastLoginTime > SESSION_TIMEOUT)) {
+        handleSignOut();
+      }
+    };
+
+    const interval = setInterval(checkSession, 1000); // Check every second
+
+    return () => clearInterval(interval);
+  }, [lastLoginTime]);
 
   const fetchCountdowns = async () => {
     const { data, error } = await supabase
@@ -135,6 +149,11 @@ const Dashboard: React.FC = () => {
     }
   ];
 
+  // Calculate remaining session time
+  const remainingTime = lastLoginTime ? Math.max(0, SESSION_TIMEOUT - (Date.now() - lastLoginTime)) : 0;
+  const remainingMinutes = Math.floor(remainingTime / 60000);
+  const remainingSeconds = Math.floor((remainingTime % 60000) / 1000);
+
   const openDemoInNewTab = (path: string) => {
     window.open(path, '_blank');
   };
@@ -149,6 +168,9 @@ const Dashboard: React.FC = () => {
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold mb-2">Welcome Back!</h1>
+            <p className="text-gray-400">
+              Session expires in: {remainingMinutes}m {remainingSeconds}s
+            </p>
           </div>
 
           <button
@@ -298,4 +320,4 @@ const Dashboard: React.FC = () => {
   );
 };
 
-export default Dashboard
+export default Dashboard;
