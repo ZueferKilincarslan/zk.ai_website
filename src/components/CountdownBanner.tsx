@@ -4,7 +4,7 @@ import { Timer, X } from 'lucide-react';
 import { supabase } from '../services/supabase';
 
 interface CountdownBannerProps {
-  language: 'en' | 'de' | 'tr';
+  language: 'en' | 'de';
 }
 
 interface Countdown {
@@ -91,10 +91,10 @@ const CountdownBanner: React.FC<CountdownBannerProps> = ({ language }) => {
   if (!countdown || !timeLeft || !isVisible) return null;
 
   const translations = {
-    days: language === 'de' ? 'Tage' : language === 'tr' ? 'Gün' : 'Days',
-    hours: language === 'de' ? 'Stunden' : language === 'tr' ? 'Saat' : 'Hours',
-    minutes: language === 'de' ? 'Minuten' : language === 'tr' ? 'Dakika' : 'Minutes',
-    seconds: language === 'de' ? 'Sekunden' : language === 'tr' ? 'Saniye' : 'Seconds',
+    days: language === 'de' ? 'Tage' : 'Days',
+    hours: language === 'de' ? 'Stunden' : 'Hours',
+    minutes: language === 'de' ? 'Minuten' : 'Minutes',
+    seconds: language === 'de' ? 'Sekunden' : 'Seconds',
   };
 
   return (
