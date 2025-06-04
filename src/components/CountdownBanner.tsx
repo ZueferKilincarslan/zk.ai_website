@@ -4,7 +4,7 @@ import { Timer, X } from 'lucide-react';
 import { supabase } from '../services/supabase';
 
 interface CountdownBannerProps {
-  language: 'en' | 'de';
+  language: 'en' | 'de' | 'tr';
 }
 
 interface Countdown {
@@ -91,10 +91,10 @@ const CountdownBanner: React.FC<CountdownBannerProps> = ({ language }) => {
   if (!countdown || !timeLeft || !isVisible) return null;
 
   const translations = {
-    days: language === 'de' ? 'Tage' : 'Days',
-    hours: language === 'de' ? 'Stunden' : 'Hours',
-    minutes: language === 'de' ? 'Minuten' : 'Minutes',
-    seconds: language === 'de' ? 'Sekunden' : 'Seconds',
+    days: language === 'de' ? 'Tage' : language === 'tr' ? 'Gün' : 'Days',
+    hours: language === 'de' ? 'Stunden' : language === 'tr' ? 'Saat' : 'Hours',
+    minutes: language === 'de' ? 'Minuten' : language === 'tr' ? 'Dakika' : 'Minutes',
+    seconds: language === 'de' ? 'Sekunden' : language === 'tr' ? 'Saniye' : 'Seconds',
   };
 
   return (
@@ -114,7 +114,14 @@ const CountdownBanner: React.FC<CountdownBannerProps> = ({ language }) => {
           <div className="flex items-center gap-4">
             {Object.entries(timeLeft).map(([unit, value]) => (
               <div key={unit} className="text-center">
-                <div className="text-2xl font-bold">{value.toString().padStart(2, '0')}</div>
+                <div className={`text-2xl font-bold ${
+                  unit === 'days' && value === 0 ? 'text-red-300' :
+                  unit === 'hours' && value < 12 ? 'text-red-300' :
+                  unit === 'minutes' && value < 30 ? 'text-red-300' :
+                  unit === 'seconds' && value < 30 ? 'text-red-300' : ''
+                }`}>
+                  {value.toString().padStart(2, '0')}
+                </div>
                 <div className="text-xs text-purple-200">{translations[unit as keyof typeof translations]}</div>
               </div>
             ))}
