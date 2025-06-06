@@ -31,16 +31,17 @@ const CountdownBanner: React.FC<CountdownBannerProps> = ({ language }) => {
         .select('*')
         .eq('is_active', true)
         .order('target_date', { ascending: true })
-        .limit(1)
-        .single();
+        .limit(1);
 
       if (error) {
         console.error('Error fetching countdown:', error);
         return;
       }
 
-      if (data) {
-        setCountdown(data);
+      if (data && data.length > 0) {
+        setCountdown(data[0]);
+      } else {
+        setCountdown(null);
       }
     };
 
