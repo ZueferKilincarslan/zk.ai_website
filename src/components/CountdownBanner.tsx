@@ -105,17 +105,17 @@ const CountdownBanner: React.FC<CountdownBannerProps> = ({ language }) => {
       exit={{ height: 0, opacity: 0 }}
       className="bg-gradient-to-r from-purple-600 to-purple-800 text-white relative"
     >
-      <div className="max-w-7xl mx-auto px-4 py-3">
+      <div className="max-w-7xl mx-auto px-4 py-2">
         <div className="flex items-center justify-center gap-8">
           <div className="flex items-center gap-2">
-            <Timer className="w-5 h-5" />
-            <span className="font-medium">{countdown.title}</span>
+            <Timer className="w-4 h-4" />
+            <span className="font-medium text-sm">{countdown.title}</span>
           </div>
           
           <div className="flex items-center gap-4">
             {Object.entries(timeLeft).map(([unit, value]) => (
               <div key={unit} className="text-center">
-                <div className={`text-2xl font-bold ${
+                <div className={`text-lg font-bold text-white ${
                   unit === 'days' && value === 0 ? 'text-red-300' :
                   unit === 'hours' && value < 12 ? 'text-red-300' :
                   unit === 'minutes' && value < 30 ? 'text-red-300' :
@@ -128,14 +128,6 @@ const CountdownBanner: React.FC<CountdownBannerProps> = ({ language }) => {
             ))}
           </div>
         </div>
-
-        <button
-          onClick={() => setIsVisible(false)}
-          className="absolute right-4 top-1/2 -translate-y-1/2 text-purple-200 hover:text-white transition-colors"
-          aria-label="Close countdown"
-        >
-          <X className="w-5 h-5" />
-        </button>
       </div>
     </motion.div>
   );

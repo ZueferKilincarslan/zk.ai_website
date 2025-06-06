@@ -28,13 +28,32 @@ const Dashboard: React.FC = () => {
     fetchCountdowns();
 
     const subscription = supabase
-      .channel('countdowns')
+      .channel('countdowns_admin')
       .on('postgres_changes', { 
-        event: '*', 
+        event: 'INSERT', 
         schema: 'public', 
         table: 'countdowns' 
-      }, () => {
-        fetchCountdowns();
+      }, (payload) => {
+        console.log('New countdown created:', payload.new);
+        setCountdowns(prev => [...prev, payload.new as Countdown]);
+      })
+      .on('postgres_changes', { 
+        event: 'UPDATE', 
+        schema: 'public', 
+        table: 'countdowns' 
+      }, (payload) => {
+        console.log('Countdown updated:', payload.new);
+        setCountdowns(prev => prev.map(countdown => 
+          countdown.id === payload.new.id ? payload.new as Countdown : countdown
+        ));
+      })
+      .on('postgres_changes', { 
+        event: 'DELETE', 
+        schema: 'public', 
+        table: 'countdowns' 
+      }, (payload) => {
+        console.log('Countdown deleted:', payload.old);
+        setCountdowns(prev => prev.filter(countdown => countdown.id !== payload.old.id));
       })
       .subscribe();
 
@@ -224,8 +243,11 @@ const Dashboard: React.FC = () => {
 
           <div className="space-y-4">
             {countdowns.map((countdown) => (
-              <div
+              <motion.div
                 key={countdown.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
                 className="flex items-center justify-between p-4 bg-black/20 rounded-lg"
               >
                 <div>
@@ -252,7 +274,7 @@ const Dashboard: React.FC = () => {
                     <Trash2 className="w-5 h-5" />
                   </button>
                 </div>
-              </div>
+              </motion.div>
             ))}
             {countdowns.length === 0 && (
               <p className="text-center text-gray-400">No countdowns yet</p>
