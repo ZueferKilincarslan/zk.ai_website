@@ -107,41 +107,77 @@ const Dashboard: React.FC = () => {
       return;
     }
 
-    const { error } = await supabase
-      .from('countdowns')
-      .insert([{
+    try {
+      const newCountdownData = {
         title: newCountdown.title,
         target_date: new Date(newCountdown.target_date).toISOString(),
         is_active: true
-      }]);
+      };
 
-    if (error) {
-      setError(error.message);
-      return;
+      const { data, error } = await supabase
+        .from('countdowns')
+        .insert([newCountdownData])
+        .select()
+        .single();
+
+      if (error) {
+        setError(error.message);
+        return;
+      }
+
+      // Immediately update the local state with the new countdown
+      if (data) {
+        setCountdowns(prev => [...prev, data as Countdown]);
+      }
+
+      // Clear the form
+      setNewCountdown({ title: '', target_date: '' });
+    } catch (err: any) {
+      setError(err.message || 'Failed to create countdown');
     }
-
-    setNewCountdown({ title: '', target_date: '' });
   };
 
   const toggleCountdown = async (id: string, currentState: boolean) => {
-    const { error } = await supabase
-      .from('countdowns')
-      .update({ is_active: !currentState })
-      .eq('id', id);
+    try {
+      const { data, error } = await supabase
+        .from('countdowns')
+        .update({ is_active: !currentState })
+        .eq('id', id)
+        .select()
+        .single();
 
-    if (error) {
-      console.error('Error toggling countdown:', error);
+      if (error) {
+        console.error('Error toggling countdown:', error);
+        return;
+      }
+
+      // Immediately update the local state
+      if (data) {
+        setCountdowns(prev => prev.map(countdown => 
+          countdown.id === id ? data as Countdown : countdown
+        ));
+      }
+    } catch (err) {
+      console.error('Error toggling countdown:', err);
     }
   };
 
   const deleteCountdown = async (id: string) => {
-    const { error } = await supabase
-      .from('countdowns')
-      .delete()
-      .eq('id', id);
+    try {
+      const { error } = await supabase
+        .from('countdowns')
+        .delete()
+        .eq('id', id);
 
-    if (error) {
-      console.error('Error deleting countdown:', error);
+      if (error) {
+        console.error('Error deleting countdown:', error);
+        return;
+      }
+
+      // Immediately update the local state
+      setCountdowns(prev => prev.filter(countdown => countdown.id !== id));
+    } catch (err) {
+      console.error('Error deleting countdown:', err);
     }
   };
 
