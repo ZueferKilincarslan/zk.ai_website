@@ -28,13 +28,32 @@ const Dashboard: React.FC = () => {
     fetchCountdowns();
 
     const subscription = supabase
-      .channel('countdowns')
+      .channel('countdowns_admin')
       .on('postgres_changes', { 
-        event: '*', 
+        event: 'INSERT', 
         schema: 'public', 
         table: 'countdowns' 
-      }, () => {
-        fetchCountdowns();
+      }, (payload) => {
+        console.log('New countdown created:', payload.new);
+        setCountdowns(prev => [...prev, payload.new as Countdown]);
+      })
+      .on('postgres_changes', { 
+        event: 'UPDATE', 
+        schema: 'public', 
+        table: 'countdowns' 
+      }, (payload) => {
+        console.log('Countdown updated:', payload.new);
+        setCountdowns(prev => prev.map(countdown => 
+          countdown.id === payload.new.id ? payload.new as Countdown : countdown
+        ));
+      })
+      .on('postgres_changes', { 
+        event: 'DELETE', 
+        schema: 'public', 
+        table: 'countdowns' 
+      }, (payload) => {
+        console.log('Countdown deleted:', payload.old);
+        setCountdowns(prev => prev.filter(countdown => countdown.id !== payload.old.id));
       })
       .subscribe();
 
@@ -88,41 +107,77 @@ const Dashboard: React.FC = () => {
       return;
     }
 
-    const { error } = await supabase
-      .from('countdowns')
-      .insert([{
+    try {
+      const newCountdownData = {
         title: newCountdown.title,
         target_date: new Date(newCountdown.target_date).toISOString(),
         is_active: true
-      }]);
+      };
 
-    if (error) {
-      setError(error.message);
-      return;
+      const { data, error } = await supabase
+        .from('countdowns')
+        .insert([newCountdownData])
+        .select()
+        .single();
+
+      if (error) {
+        setError(error.message);
+        return;
+      }
+
+      // Immediately update the local state with the new countdown
+      if (data) {
+        setCountdowns(prev => [...prev, data as Countdown]);
+      }
+
+      // Clear the form
+      setNewCountdown({ title: '', target_date: '' });
+    } catch (err: any) {
+      setError(err.message || 'Failed to create countdown');
     }
-
-    setNewCountdown({ title: '', target_date: '' });
   };
 
   const toggleCountdown = async (id: string, currentState: boolean) => {
-    const { error } = await supabase
-      .from('countdowns')
-      .update({ is_active: !currentState })
-      .eq('id', id);
+    try {
+      const { data, error } = await supabase
+        .from('countdowns')
+        .update({ is_active: !currentState })
+        .eq('id', id)
+        .select()
+        .single();
 
-    if (error) {
-      console.error('Error toggling countdown:', error);
+      if (error) {
+        console.error('Error toggling countdown:', error);
+        return;
+      }
+
+      // Immediately update the local state
+      if (data) {
+        setCountdowns(prev => prev.map(countdown => 
+          countdown.id === id ? data as Countdown : countdown
+        ));
+      }
+    } catch (err) {
+      console.error('Error toggling countdown:', err);
     }
   };
 
   const deleteCountdown = async (id: string) => {
-    const { error } = await supabase
-      .from('countdowns')
-      .delete()
-      .eq('id', id);
+    try {
+      const { error } = await supabase
+        .from('countdowns')
+        .delete()
+        .eq('id', id);
 
-    if (error) {
-      console.error('Error deleting countdown:', error);
+      if (error) {
+        console.error('Error deleting countdown:', error);
+        return;
+      }
+
+      // Immediately update the local state
+      setCountdowns(prev => prev.filter(countdown => countdown.id !== id));
+    } catch (err) {
+      console.error('Error deleting countdown:', err);
     }
   };
 
@@ -224,8 +279,11 @@ const Dashboard: React.FC = () => {
 
           <div className="space-y-4">
             {countdowns.map((countdown) => (
-              <div
+              <motion.div
                 key={countdown.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
                 className="flex items-center justify-between p-4 bg-black/20 rounded-lg"
               >
                 <div>
@@ -252,7 +310,7 @@ const Dashboard: React.FC = () => {
                     <Trash2 className="w-5 h-5" />
                   </button>
                 </div>
-              </div>
+              </motion.div>
             ))}
             {countdowns.length === 0 && (
               <p className="text-center text-gray-400">No countdowns yet</p>

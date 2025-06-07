@@ -4,7 +4,7 @@ import { Timer, X } from 'lucide-react';
 import { supabase } from '../services/supabase';
 
 interface CountdownBannerProps {
-  language: 'en' | 'de';
+  language: 'en' | 'de' | 'tr';
 }
 
 interface Countdown {
@@ -31,16 +31,17 @@ const CountdownBanner: React.FC<CountdownBannerProps> = ({ language }) => {
         .select('*')
         .eq('is_active', true)
         .order('target_date', { ascending: true })
-        .limit(1)
-        .single();
+        .limit(1);
 
       if (error) {
         console.error('Error fetching countdown:', error);
         return;
       }
 
-      if (data) {
-        setCountdown(data);
+      if (data && data.length > 0) {
+        setCountdown(data[0]);
+      } else {
+        setCountdown(null);
       }
     };
 
@@ -91,10 +92,10 @@ const CountdownBanner: React.FC<CountdownBannerProps> = ({ language }) => {
   if (!countdown || !timeLeft || !isVisible) return null;
 
   const translations = {
-    days: language === 'de' ? 'Tage' : 'Days',
-    hours: language === 'de' ? 'Stunden' : 'Hours',
-    minutes: language === 'de' ? 'Minuten' : 'Minutes',
-    seconds: language === 'de' ? 'Sekunden' : 'Seconds',
+    days: language === 'de' ? 'Tage' : language === 'tr' ? 'Gün' : 'Days',
+    hours: language === 'de' ? 'Stunden' : language === 'tr' ? 'Saat' : 'Hours',
+    minutes: language === 'de' ? 'Minuten' : language === 'tr' ? 'Dakika' : 'Minutes',
+    seconds: language === 'de' ? 'Sekunden' : language === 'tr' ? 'Saniye' : 'Seconds',
   };
 
   return (
@@ -104,30 +105,29 @@ const CountdownBanner: React.FC<CountdownBannerProps> = ({ language }) => {
       exit={{ height: 0, opacity: 0 }}
       className="bg-gradient-to-r from-purple-600 to-purple-800 text-white relative"
     >
-      <div className="max-w-7xl mx-auto px-4 py-3">
+      <div className="max-w-7xl mx-auto px-4 py-2">
         <div className="flex items-center justify-center gap-8">
           <div className="flex items-center gap-2">
-            <Timer className="w-5 h-5" />
-            <span className="font-medium">{countdown.title}</span>
+            <Timer className="w-4 h-4" />
+            <span className="font-medium text-sm">{countdown.title}</span>
           </div>
           
           <div className="flex items-center gap-4">
             {Object.entries(timeLeft).map(([unit, value]) => (
               <div key={unit} className="text-center">
-                <div className="text-2xl font-bold">{value.toString().padStart(2, '0')}</div>
+                <div className={`text-lg font-bold text-white ${
+                  unit === 'days' && value === 0 ? 'text-red-300' :
+                  unit === 'hours' && value < 12 ? 'text-red-300' :
+                  unit === 'minutes' && value < 30 ? 'text-red-300' :
+                  unit === 'seconds' && value < 30 ? 'text-red-300' : ''
+                }`}>
+                  {value.toString().padStart(2, '0')}
+                </div>
                 <div className="text-xs text-purple-200">{translations[unit as keyof typeof translations]}</div>
               </div>
             ))}
           </div>
         </div>
-
-        <button
-          onClick={() => setIsVisible(false)}
-          className="absolute right-4 top-1/2 -translate-y-1/2 text-purple-200 hover:text-white transition-colors"
-          aria-label="Close countdown"
-        >
-          <X className="w-5 h-5" />
-        </button>
       </div>
     </motion.div>
   );
