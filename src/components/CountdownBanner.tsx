@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Timer, X } from 'lucide-react';
 import { supabase } from '../services/supabase';
 
@@ -89,8 +89,6 @@ const CountdownBanner: React.FC<CountdownBannerProps> = ({ language }) => {
     return () => clearInterval(timer);
   }, [countdown]);
 
-  if (!countdown || !timeLeft || !isVisible) return null;
-
   const translations = {
     days: language === 'de' ? 'Tage' : language === 'tr' ? 'Gün' : 'Days',
     hours: language === 'de' ? 'Stunden' : language === 'tr' ? 'Saat' : 'Hours',
@@ -98,38 +96,46 @@ const CountdownBanner: React.FC<CountdownBannerProps> = ({ language }) => {
     seconds: language === 'de' ? 'Sekunden' : language === 'tr' ? 'Saniye' : 'Seconds',
   };
 
+  // Don't render anything if no countdown or not visible
+  if (!countdown || !timeLeft || !isVisible) {
+    return null;
+  }
+
   return (
-    <motion.div
-      initial={{ height: 0, opacity: 0 }}
-      animate={{ height: 'auto', opacity: 1 }}
-      exit={{ height: 0, opacity: 0 }}
-      className="bg-gradient-to-r from-purple-600 to-purple-800 text-white relative"
-    >
-      <div className="max-w-7xl mx-auto px-4 py-2">
-        <div className="flex items-center justify-center gap-8">
-          <div className="flex items-center gap-2">
-            <Timer className="w-4 h-4" />
-            <span className="font-medium text-sm">{countdown.title}</span>
-          </div>
-          
-          <div className="flex items-center gap-4">
-            {Object.entries(timeLeft).map(([unit, value]) => (
-              <div key={unit} className="text-center">
-                <div className={`text-lg font-bold text-white ${
-                  unit === 'days' && value === 0 ? 'text-red-300' :
-                  unit === 'hours' && value < 12 ? 'text-red-300' :
-                  unit === 'minutes' && value < 30 ? 'text-red-300' :
-                  unit === 'seconds' && value < 30 ? 'text-red-300' : ''
-                }`}>
-                  {value.toString().padStart(2, '0')}
+    <AnimatePresence>
+      <motion.div
+        initial={{ height: 0, opacity: 0 }}
+        animate={{ height: 'auto', opacity: 1 }}
+        exit={{ height: 0, opacity: 0 }}
+        transition={{ duration: 0.3, ease: 'easeInOut' }}
+        className="bg-gradient-to-r from-purple-600 to-purple-800 text-white relative overflow-hidden"
+      >
+        <div className="max-w-7xl mx-auto px-4 py-2">
+          <div className="flex items-center justify-center gap-8">
+            <div className="flex items-center gap-2">
+              <Timer className="w-4 h-4" />
+              <span className="font-medium text-sm">{countdown.title}</span>
+            </div>
+            
+            <div className="flex items-center gap-4">
+              {Object.entries(timeLeft).map(([unit, value]) => (
+                <div key={unit} className="text-center">
+                  <div className={`text-lg font-bold text-white ${
+                    unit === 'days' && value === 0 ? 'text-red-300' :
+                    unit === 'hours' && value < 12 ? 'text-red-300' :
+                    unit === 'minutes' && value < 30 ? 'text-red-300' :
+                    unit === 'seconds' && value < 30 ? 'text-red-300' : ''
+                  }`}>
+                    {value.toString().padStart(2, '0')}
+                  </div>
+                  <div className="text-xs text-purple-200">{translations[unit as keyof typeof translations]}</div>
                 </div>
-                <div className="text-xs text-purple-200">{translations[unit as keyof typeof translations]}</div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
-      </div>
-    </motion.div>
+      </motion.div>
+    </AnimatePresence>
   );
 };
 
