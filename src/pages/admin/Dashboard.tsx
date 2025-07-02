@@ -318,7 +318,7 @@ const Dashboard: React.FC = () => {
                     <Trash2 className="w-5 h-5" />
                   </button>
                 </div>
-              </div>
+              </motion.div>
             ))}
             {countdowns.length === 0 && (
               <p className="text-center text-gray-400">No countdowns yet</p>
