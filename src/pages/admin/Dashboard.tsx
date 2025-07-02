@@ -22,7 +22,17 @@ const Dashboard: React.FC = () => {
     target_date: ''
   });
   const [error, setError] = useState<string | null>(null);
+  const [currentTime, setCurrentTime] = useState(Date.now());
   const SESSION_TIMEOUT = 5 * 60 * 1000; // 5 minutes in milliseconds
+
+  // Update current time every second for live countdown
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(Date.now());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     fetchCountdowns();
@@ -63,17 +73,15 @@ const Dashboard: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    // Set up interval to check session expiry
+    // Check session expiry based on current time
     const checkSession = () => {
-      if (lastLoginTime && (Date.now() - lastLoginTime > SESSION_TIMEOUT)) {
+      if (lastLoginTime && (currentTime - lastLoginTime > SESSION_TIMEOUT)) {
         handleSignOut();
       }
     };
 
-    const interval = setInterval(checkSession, 1000); // Check every second
-
-    return () => clearInterval(interval);
-  }, [lastLoginTime]);
+    checkSession();
+  }, [currentTime, lastLoginTime]);
 
   const fetchCountdowns = async () => {
     const { data, error } = await supabase
@@ -204,8 +212,8 @@ const Dashboard: React.FC = () => {
     }
   ];
 
-  // Calculate remaining session time
-  const remainingTime = lastLoginTime ? Math.max(0, SESSION_TIMEOUT - (Date.now() - lastLoginTime)) : 0;
+  // Calculate remaining session time using current time
+  const remainingTime = lastLoginTime ? Math.max(0, SESSION_TIMEOUT - (currentTime - lastLoginTime)) : 0;
   const remainingMinutes = Math.floor(remainingTime / 60000);
   const remainingSeconds = Math.floor((remainingTime % 60000) / 1000);
 
@@ -310,7 +318,7 @@ const Dashboard: React.FC = () => {
                     <Trash2 className="w-5 h-5" />
                   </button>
                 </div>
-              </motion.div>
+              </div>
             ))}
             {countdowns.length === 0 && (
               <p className="text-center text-gray-400">No countdowns yet</p>

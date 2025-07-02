@@ -110,17 +110,17 @@ const CountdownBanner: React.FC<CountdownBannerProps> = ({ language }) => {
         transition={{ duration: 0.3, ease: 'easeInOut' }}
         className="bg-gradient-to-r from-purple-600 to-purple-800 text-white relative overflow-hidden"
       >
-        <div className="max-w-7xl mx-auto px-4 py-2">
-          <div className="flex items-center justify-center gap-8">
+        <div className="max-w-7xl mx-auto px-4 py-1.5">
+          <div className="flex items-center justify-center gap-6">
             <div className="flex items-center gap-2">
-              <Timer className="w-4 h-4" />
+              <Timer className="w-3.5 h-3.5" />
               <span className="font-medium text-sm">{countdown.title}</span>
             </div>
             
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               {Object.entries(timeLeft).map(([unit, value]) => (
                 <div key={unit} className="text-center">
-                  <div className={`text-lg font-bold text-white ${
+                  <div className={`text-base font-bold text-white ${
                     unit === 'days' && value === 0 ? 'text-red-300' :
                     unit === 'hours' && value < 12 ? 'text-red-300' :
                     unit === 'minutes' && value < 30 ? 'text-red-300' :
