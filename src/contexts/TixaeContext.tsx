@@ -13,60 +13,91 @@ export const useTixae = () => useContext(TixaeContext);
 
 export const TixaeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
-  const isDashboard = location.pathname.includes('/admin/dashboard');
-  const isDemo = location.pathname.includes('/admin/demo');
   const isDemo1 = location.pathname === '/admin/demo/1';
+  const isDemo = location.pathname.includes('/admin/demo');
 
   useEffect(() => {
-    // COMPLETE cleanup of any existing chatbot instances
-    const completeCleanup = () => {
-      // Remove all existing scripts
-      const allScripts = document.querySelectorAll('script[data-convocore-script], script[data-voiceflow-script]');
-      allScripts.forEach(script => script.remove());
+    // Aggressive cleanup function
+    const destroyAllBots = () => {
+      console.log('🧹 Destroying all existing bots...');
       
-      // Clean up global variables
+      // 1. Remove all bot scripts
+      const scripts = document.querySelectorAll('script[data-voiceflow-script], script[data-convocore-script]');
+      scripts.forEach(script => {
+        console.log('Removing script:', script);
+        script.remove();
+      });
+
+      // 2. Clean global variables
       if (window.VG_CONFIG) {
         delete window.VG_CONFIG;
+        console.log('Deleted VG_CONFIG');
       }
       if (window.voiceflow) {
         delete window.voiceflow;
+        console.log('Deleted voiceflow');
       }
 
-      // Remove VG_OVERLAY_CONTAINER completely
-      const container = document.getElementById('VG_OVERLAY_CONTAINER');
-      if (container) {
-        container.remove();
+      // 3. Remove VG container
+      const vgContainer = document.getElementById('VG_OVERLAY_CONTAINER');
+      if (vgContainer) {
+        vgContainer.remove();
+        console.log('Removed VG_OVERLAY_CONTAINER');
       }
 
-      // Remove any dynamically created elements by both bots
-      const voiceflowElements = document.querySelectorAll('[data-voiceflow], [class*="voiceflow"], [id*="voiceflow"], [class*="vf-"]');
-      voiceflowElements.forEach(el => el.remove());
+      // 4. Remove all voiceflow elements
+      const voiceflowElements = document.querySelectorAll(
+        '[data-voiceflow], [class*="voiceflow"], [id*="voiceflow"], [class*="vf-"], [data-vf], iframe[src*="voiceflow"]'
+      );
+      voiceflowElements.forEach(el => {
+        console.log('Removing voiceflow element:', el);
+        el.remove();
+      });
 
-      const convocoreElements = document.querySelectorAll('[data-convocore], [class*="convocore"], [class*="vg-"], [id*="vg"], [id*="VG"]');
-      convocoreElements.forEach(el => el.remove());
+      // 5. Remove all convocore/VG elements
+      const convocoreElements = document.querySelectorAll(
+        '[data-convocore], [class*="convocore"], [class*="vg-"], [id*="vg"], [id*="VG"], iframe[src*="bunny-cdn"]'
+      );
+      convocoreElements.forEach(el => {
+        console.log('Removing convocore element:', el);
+        el.remove();
+      });
 
-      // Remove any floating chat widgets
-      const chatWidgets = document.querySelectorAll('[class*="chat"], [class*="widget"], [class*="bot"]');
-      chatWidgets.forEach(el => {
-        if (el.id && (el.id.includes('vg') || el.id.includes('VG') || el.id.includes('voiceflow'))) {
+      // 6. Remove any chat widgets or floating elements
+      const chatElements = document.querySelectorAll(
+        '[class*="chat-widget"], [class*="chatbot"], [id*="chat"], [class*="widget"], div[style*="position: fixed"]'
+      );
+      chatElements.forEach(el => {
+        const style = el.getAttribute('style') || '';
+        const className = el.className || '';
+        const id = el.id || '';
+        
+        if (style.includes('position: fixed') || 
+            className.includes('chat') || 
+            className.includes('widget') || 
+            id.includes('chat') ||
+            id.includes('widget')) {
+          console.log('Removing chat element:', el);
           el.remove();
         }
       });
+
+      console.log('✅ All bots destroyed');
     };
 
-    // Start with complete cleanup
-    completeCleanup();
+    // Initial cleanup
+    destroyAllBots();
 
-    // Wait longer for cleanup to complete, then initialize the correct bot
-    setTimeout(() => {
+    // Wait for cleanup, then initialize the correct bot
+    const initTimer = setTimeout(() => {
       if (isDemo1) {
-        console.log('Demo 1: Loading ONLY Voiceflow - NO TixaeAgent');
+        console.log('🤖 Demo 1: Initializing ONLY Voiceflow bot');
         
-        // For Demo 1: ONLY Voiceflow, NO TixaeAgent
-        const script = document.createElement('script');
-        script.setAttribute('data-voiceflow-script', '');
-        script.type = 'text/javascript';
-        script.textContent = `
+        // Create and add Voiceflow script for Demo 1
+        const voiceflowScript = document.createElement('script');
+        voiceflowScript.setAttribute('data-voiceflow-script', 'demo1');
+        voiceflowScript.type = 'text/javascript';
+        voiceflowScript.innerHTML = `
           (function(d, t) {
             var v = d.createElement(t), s = d.getElementsByTagName(t)[0];
             v.onload = function() {
@@ -84,23 +115,23 @@ export const TixaeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             s.parentNode.insertBefore(v, s);
           })(document, 'script');
         `;
-        document.body.appendChild(script);
-      } else {
-        console.log('Other pages: Loading ONLY TixaeAgent - NO Voiceflow');
+        document.head.appendChild(voiceflowScript);
         
-        // For ALL OTHER pages: ONLY TixaeAgent, NO Voiceflow
-        // Create CONVOCORE container
+      } else {
+        console.log('🤖 Other pages: Initializing ONLY TixaeAgent bot');
+        
+        // Create VG container for other pages
         const container = document.createElement('div');
         container.id = 'VG_OVERLAY_CONTAINER';
         container.style.width = '0';
         container.style.height = '0';
         document.body.appendChild(container);
 
-        // Initialize CONVOCORE chatbot
-        const script = document.createElement('script');
-        script.setAttribute('data-convocore-script', '');
-        script.defer = true;
-        script.textContent = `
+        // Create and add TixaeAgent script
+        const tixaeScript = document.createElement('script');
+        tixaeScript.setAttribute('data-convocore-script', 'main');
+        tixaeScript.defer = true;
+        tixaeScript.innerHTML = `
           (function() {
             window.VG_CONFIG = {
               ID: "ux5puvqrx8jlan6n",
@@ -118,15 +149,16 @@ export const TixaeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             document.body.appendChild(VG_SCRIPT);
           })()
         `;
-        document.body.appendChild(script);
+        document.head.appendChild(tixaeScript);
       }
-    }, 200); // Increased timeout
+    }, 300);
 
-    // Cleanup function
+    // Cleanup function when component unmounts or route changes
     return () => {
-      completeCleanup();
+      clearTimeout(initTimer);
+      destroyAllBots();
     };
-  }, [location.pathname]); // Changed dependency to pathname for more precise tracking
+  }, [location.pathname]); // React to pathname changes
 
   return (
     <TixaeContext.Provider value={{ isDemo }}>
