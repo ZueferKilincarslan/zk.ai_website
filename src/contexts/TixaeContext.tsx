@@ -42,7 +42,7 @@ export const TixaeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
 
     if (isDemo1) {
-      // Initialize Voiceflow chatbot for Demo 1 page
+      // Initialize Voiceflow chatbot for Demo 1 page ONLY
       const script = document.createElement('script');
       script.setAttribute('data-voiceflow-script', '');
       script.type = 'text/javascript';
@@ -66,7 +66,7 @@ export const TixaeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       `;
       document.body.appendChild(script);
     } else {
-      // Create CONVOCORE container for all other pages
+      // Initialize CONVOCORE chatbot for ALL OTHER pages (excluding Demo 1)
       let container = existingContainer;
       if (!container) {
         container = document.createElement('div');
@@ -76,7 +76,6 @@ export const TixaeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         document.body.appendChild(container);
       }
 
-      // Initialize CONVOCORE chatbot for all other pages
       const script = document.createElement('script');
       script.setAttribute('data-convocore-script', '');
       script.defer = true;
