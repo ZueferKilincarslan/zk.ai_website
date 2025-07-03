@@ -18,19 +18,11 @@ export const TixaeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const isDemo1 = location.pathname === '/admin/demo/1';
 
   useEffect(() => {
-    // AGGRESSIVE cleanup of any existing chatbot instances
-    const cleanupAllBots = () => {
+    // COMPLETE cleanup of any existing chatbot instances
+    const completeCleanup = () => {
       // Remove all existing scripts
-      const existingConvocoreScript = document.querySelector('script[data-convocore-script]');
-      const existingVoiceflowScript = document.querySelector('script[data-voiceflow-script]');
-      const existingContainer = document.getElementById('VG_OVERLAY_CONTAINER');
-      
-      if (existingConvocoreScript) {
-        existingConvocoreScript.remove();
-      }
-      if (existingVoiceflowScript) {
-        existingVoiceflowScript.remove();
-      }
+      const allScripts = document.querySelectorAll('script[data-convocore-script], script[data-voiceflow-script]');
+      allScripts.forEach(script => script.remove());
       
       // Clean up global variables
       if (window.VG_CONFIG) {
@@ -40,30 +32,37 @@ export const TixaeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         delete window.voiceflow;
       }
 
-      // Clean up any existing widgets in the DOM
-      if (existingContainer) {
-        existingContainer.innerHTML = '';
-        existingContainer.style.display = 'none';
+      // Remove VG_OVERLAY_CONTAINER completely
+      const container = document.getElementById('VG_OVERLAY_CONTAINER');
+      if (container) {
+        container.remove();
       }
 
-      // Remove any dynamically created Voiceflow elements
-      const voiceflowElements = document.querySelectorAll('[data-voiceflow], [class*="voiceflow"], [id*="voiceflow"]');
+      // Remove any dynamically created elements by both bots
+      const voiceflowElements = document.querySelectorAll('[data-voiceflow], [class*="voiceflow"], [id*="voiceflow"], [class*="vf-"]');
       voiceflowElements.forEach(el => el.remove());
 
-      // Remove any dynamically created CONVOCORE elements
-      const convocoreElements = document.querySelectorAll('[data-convocore], [class*="convocore"], [class*="vg-"]');
+      const convocoreElements = document.querySelectorAll('[data-convocore], [class*="convocore"], [class*="vg-"], [id*="vg"], [id*="VG"]');
       convocoreElements.forEach(el => el.remove());
+
+      // Remove any floating chat widgets
+      const chatWidgets = document.querySelectorAll('[class*="chat"], [class*="widget"], [class*="bot"]');
+      chatWidgets.forEach(el => {
+        if (el.id && (el.id.includes('vg') || el.id.includes('VG') || el.id.includes('voiceflow'))) {
+          el.remove();
+        }
+      });
     };
 
     // Start with complete cleanup
-    cleanupAllBots();
+    completeCleanup();
 
-    // Wait a bit for cleanup to complete, then initialize the correct bot
+    // Wait longer for cleanup to complete, then initialize the correct bot
     setTimeout(() => {
       if (isDemo1) {
-        console.log('Loading ONLY Voiceflow for Demo 1');
+        console.log('Demo 1: Loading ONLY Voiceflow - NO TixaeAgent');
         
-        // Initialize Voiceflow chatbot for Demo 1 page ONLY
+        // For Demo 1: ONLY Voiceflow, NO TixaeAgent
         const script = document.createElement('script');
         script.setAttribute('data-voiceflow-script', '');
         script.type = 'text/javascript';
@@ -87,27 +86,24 @@ export const TixaeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         `;
         document.body.appendChild(script);
       } else {
-        console.log('Loading ONLY CONVOCORE for other pages');
+        console.log('Other pages: Loading ONLY TixaeAgent - NO Voiceflow');
         
-        // Create CONVOCORE container for ALL OTHER pages (excluding Demo 1)
-        let container = document.getElementById('VG_OVERLAY_CONTAINER');
-        if (!container) {
-          container = document.createElement('div');
-          container.id = 'VG_OVERLAY_CONTAINER';
-          container.style.width = '0';
-          container.style.height = '0';
-          document.body.appendChild(container);
-        }
-        container.style.display = 'block';
+        // For ALL OTHER pages: ONLY TixaeAgent, NO Voiceflow
+        // Create CONVOCORE container
+        const container = document.createElement('div');
+        container.id = 'VG_OVERLAY_CONTAINER';
+        container.style.width = '0';
+        container.style.height = '0';
+        document.body.appendChild(container);
 
-        // Initialize CONVOCORE chatbot for ALL OTHER pages (excluding Demo 1)
+        // Initialize CONVOCORE chatbot
         const script = document.createElement('script');
         script.setAttribute('data-convocore-script', '');
         script.defer = true;
         script.textContent = `
           (function() {
             window.VG_CONFIG = {
-              ID: "ux5puvqrx8jlan6n", // Main agent ID for production
+              ID: "ux5puvqrx8jlan6n",
               region: 'eu',
               render: 'bottom-right',
               ${isDemo && !isDemo1 ? 'modalMode: true,' : ''}
@@ -124,13 +120,13 @@ export const TixaeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         `;
         document.body.appendChild(script);
       }
-    }, 100);
+    }, 200); // Increased timeout
 
     // Cleanup function
     return () => {
-      cleanupAllBots();
+      completeCleanup();
     };
-  }, [isDashboard, isDemo, isDemo1]);
+  }, [location.pathname]); // Changed dependency to pathname for more precise tracking
 
   return (
     <TixaeContext.Provider value={{ isDemo }}>
