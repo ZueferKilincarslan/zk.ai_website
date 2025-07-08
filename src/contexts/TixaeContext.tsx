@@ -158,7 +158,7 @@ export const TixaeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       clearTimeout(initTimer);
       destroyAllBots();
     };
-  }, [location.pathname]); // React to pathname changes
+  }, [location.pathname, isDemo1, isDemo]); // React to pathname changes
 
   return (
     <TixaeContext.Provider value={{ isDemo }}>
