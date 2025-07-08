@@ -93,26 +93,26 @@ export const TixaeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       if (isDemo1) {
         console.log('🤖 Demo 1: Initializing ONLY Voiceflow bot');
         
-        // Create and add Voiceflow script for Demo 1
+        // Create and add Voiceflow script for Demo 1 ONLY
         const voiceflowScript = document.createElement('script');
         voiceflowScript.setAttribute('data-voiceflow-script', 'demo1');
         voiceflowScript.type = 'text/javascript';
         voiceflowScript.innerHTML = `
           (function(d, t) {
-            var v = d.createElement(t), s = d.getElementsByTagName(t)[0];
-            v.onload = function() {
-              window.voiceflow.chat.load({
-                verify: { projectID: '67d335f7d457415e2f50d2df' },
-                url: 'https://general-runtime.voiceflow.com',
-                versionID: 'production',
-                voice: {
-                  url: "https://runtime-api.voiceflow.com"
-                }
-              });
-            }
-            v.src = "https://cdn.voiceflow.com/widget-next/bundle.mjs"; 
-            v.type = "text/javascript"; 
-            s.parentNode.insertBefore(v, s);
+              var v = d.createElement(t), s = d.getElementsByTagName(t)[0];
+              v.onload = function() {
+                window.voiceflow.chat.load({
+                  verify: { projectID: '67d335f7d457415e2f50d2df' },
+                  url: 'https://general-runtime.voiceflow.com',
+                  versionID: 'production',
+                  voice: {
+                    url: "https://runtime-api.voiceflow.com"
+                  }
+                });
+              }
+              v.src = "https://cdn.voiceflow.com/widget-next/bundle.mjs"; 
+              v.type = "text/javascript"; 
+              s.parentNode.insertBefore(v, s);
           })(document, 'script');
         `;
         document.head.appendChild(voiceflowScript);
