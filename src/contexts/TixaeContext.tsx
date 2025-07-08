@@ -17,7 +17,7 @@ export const TixaeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const isDemo = location.pathname.includes('/admin/demo');
 
   useEffect(() => {
-    // Aggressive cleanup function
+    // Comprehensive cleanup function to remove ALL existing bots
     const destroyAllBots = () => {
       console.log('🧹 Destroying all existing bots...');
       
@@ -91,11 +91,11 @@ export const TixaeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     // Wait for cleanup, then initialize the correct bot
     const initTimer = setTimeout(() => {
       if (isDemo1) {
-        console.log('🤖 Demo 1: Initializing ONLY Voiceflow bot');
+        console.log('🤖 Demo 1: Initializing EXCLUSIVELY Voiceflow bot');
         
         // Create and add Voiceflow script for Demo 1 ONLY
         const voiceflowScript = document.createElement('script');
-        voiceflowScript.setAttribute('data-voiceflow-script', 'demo1');
+        voiceflowScript.setAttribute('data-voiceflow-script', 'demo1-exclusive');
         voiceflowScript.type = 'text/javascript';
         voiceflowScript.innerHTML = `
           (function(d, t) {
@@ -116,18 +116,19 @@ export const TixaeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           })(document, 'script');
         `;
         document.head.appendChild(voiceflowScript);
+        console.log('✅ Voiceflow bot script added to Demo 1');
         
       } else {
-        console.log('🤖 Other pages: Initializing ONLY TixaeAgent bot');
+        console.log('🤖 Other pages: Initializing EXCLUSIVELY TixaeAgent bot');
         
-        // Create VG container for other pages
+        // Create VG container for other pages (NOT Demo 1)
         const container = document.createElement('div');
         container.id = 'VG_OVERLAY_CONTAINER';
         container.style.width = '0';
         container.style.height = '0';
         document.body.appendChild(container);
 
-        // Create and add TixaeAgent script
+        // Create and add TixaeAgent script for all pages EXCEPT Demo 1
         const tixaeScript = document.createElement('script');
         tixaeScript.setAttribute('data-convocore-script', 'main');
         tixaeScript.defer = true;
@@ -150,6 +151,7 @@ export const TixaeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           })()
         `;
         document.head.appendChild(tixaeScript);
+        console.log('✅ TixaeAgent bot script added to non-Demo1 page');
       }
     }, 300);
 
@@ -158,7 +160,7 @@ export const TixaeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       clearTimeout(initTimer);
       destroyAllBots();
     };
-  }, [location.pathname, isDemo1, isDemo]); // React to pathname changes
+  }, [location.pathname, isDemo1, isDemo]);
 
   return (
     <TixaeContext.Provider value={{ isDemo }}>
