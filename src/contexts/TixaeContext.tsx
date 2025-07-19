@@ -13,102 +13,130 @@ export const useTixae = () => useContext(TixaeContext);
 
 export const TixaeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
-  const isDashboard = location.pathname.includes('/admin/dashboard');
+  const isDemo1 = location.pathname === '/admin/demo/1';
   const isDemo = location.pathname.includes('/admin/demo');
 
   useEffect(() => {
-    // Clean up any existing Tixae instances
-    const existingScript = document.querySelector('script[data-tixae-script]');
-    const existingContainer = document.getElementById('VG_OVERLAY_CONTAINER');
-    
-    if (existingScript) {
-      existingScript.remove();
-    }
-    if (existingContainer) {
-      existingContainer.innerHTML = '';
-    }
+    console.log('🔄 TixaeProvider: Route changed to:', location.pathname);
+    console.log('🔍 Is Demo 1:', isDemo1);
 
-    // Create container if it doesn't exist
-    let container = existingContainer;
-    if (!container) {
-      container = document.createElement('div');
-      container.id = 'VG_OVERLAY_CONTAINER';
-      container.style.position = 'fixed';
-      container.style.bottom = '0';
-      container.style.right = '0';
-      container.style.width = 'auto';
-      container.style.height = 'auto';
-      container.style.zIndex = '2147483647'; // Maximum z-index value
-      container.style.transform = 'translateZ(0)'; // Force GPU acceleration
-      container.style.willChange = 'transform'; // Optimize for animations
-      container.style.pointerEvents = 'none'; // Allow clicks to pass through container
-      document.body.appendChild(container);
-    }
+    // STEP 1: AGGRESSIVE CLEANUP - Remove ALL existing bots
+    const performCompleteCleanup = () => {
+      console.log('🧹 Starting aggressive cleanup of ALL bots...');
+      
+      // Remove ALL bot scripts
+      const allBotScripts = document.querySelectorAll(
+        'script[src*="voiceflow"], script[src*="bunny-cdn"], script[src*="vg_bundle"], script[data-voiceflow], script[data-tixae], script[data-vg]'
+      );
+      allBotScripts.forEach(script => {
+        console.log('🗑️ Removing bot script:', script.getAttribute('src') || script.getAttribute('data-voiceflow') || script.getAttribute('data-tixae'));
+        script.remove();
+      });
 
-    // Initialize appropriate bot based on route
-    const script = document.createElement('script');
-    script.setAttribute('data-tixae-script', '');
-    script.textContent = `
-      (function() {
+      // Clean ALL global variables
+      if (window.voiceflow) {
+        delete window.voiceflow;
+        console.log('🗑️ Deleted window.voiceflow');
+      }
+      if (window.VG_CONFIG) {
+        delete window.VG_CONFIG;
+        console.log('🗑️ Deleted window.VG_CONFIG');
+      }
+
+      // Remove ALL bot DOM elements
+      const allBotElements = document.querySelectorAll(
+        '#VG_OVERLAY_CONTAINER, [id*="voiceflow"], [class*="voiceflow"], [class*="vf-"], [data-voiceflow], [data-vf], iframe[src*="voiceflow"], iframe[src*="bunny-cdn"], [class*="vg-"], [id*="vg"], [data-convocore], [class*="widget"], [id*="widget"]'
+      );
+      allBotElements.forEach(el => {
+        console.log('🗑️ Removing bot element:', el.tagName, el.id || el.className);
+        el.remove();
+      });
+
+      console.log('✅ Complete bot cleanup finished');
+    };
+
+    // STEP 2: Perform cleanup immediately
+    performCompleteCleanup();
+
+    // STEP 3: Wait for cleanup, then initialize ONLY the correct bot
+    const initTimer = setTimeout(() => {
+      if (isDemo1) {
+        console.log('🤖 Demo 1: Loading ONLY Voiceflow bot - NO TixaeAgent');
+        
+        // Create Voiceflow script with your exact configuration
+        const voiceflowScript = document.createElement('script');
+        voiceflowScript.setAttribute('data-voiceflow-demo1', 'exclusive');
+        voiceflowScript.type = 'text/javascript';
+        voiceflowScript.src = 'https://cdn.voiceflow.com/widget-next/bundle.mjs';
+        
+        voiceflowScript.onload = function() {
+          console.log('✅ Voiceflow script loaded for Demo 1');
+          if (window.voiceflow && window.voiceflow.chat) {
+            window.voiceflow.chat.load({
+              verify: { projectID: '67d335f7d457415e2f50d2df' },
+              url: 'https://general-runtime.voiceflow.com',
+              versionID: 'production',
+              voice: {
+                url: "https://runtime-api.voiceflow.com"
+              }
+            });
+            console.log('✅ Voiceflow chat initialized EXCLUSIVELY for Demo 1');
+          } else {
+            console.error('❌ Voiceflow not available after script load');
+          }
+        };
+
+        voiceflowScript.onerror = function() {
+          console.error('❌ Failed to load Voiceflow script for Demo 1');
+        };
+
+        document.head.appendChild(voiceflowScript);
+        console.log('📝 ONLY Voiceflow script added to Demo 1 - TixaeAgent BLOCKED');
+        
+      } else {
+        console.log('🤖 Non-Demo1 pages: Loading ONLY TixaeAgent - NO Voiceflow');
+        
+        // Create VG container for TixaeAgent (ONLY for non-Demo1 pages)
+        const container = document.createElement('div');
+        container.id = 'VG_OVERLAY_CONTAINER';
+        document.body.appendChild(container);
+
+        // Set VG_CONFIG for TixaeAgent
         window.VG_CONFIG = {
-          ID: "${isDashboard ? 'dldb6xcly75l06qq' : isDemo ? 'dldb6xcly75l06qq' : 'ux5puvqrx8jlan6n'}", // Different IDs for dashboard/demo/production
+          ID: "ux5puvqrx8jlan6n",
           region: 'eu',
           render: 'bottom-right',
-          modalMode: ${isDemo},
           stylesheets: [
             "https://vg-bunny-cdn.b-cdn.net/vg_live_build/styles.css"
           ]
         };
 
-        // Create a style element for custom Tixae styles
-        var style = document.createElement('style');
-        style.textContent = \`
-          .vg-widget-container {
-            position: fixed !important;
-            bottom: env(safe-area-inset-bottom, 16px) !important;
-            right: env(safe-area-inset-right, 16px) !important;
-            width: auto !important;
-            height: auto !important;
-            z-index: 2147483647 !important;
-            transform: translateZ(0) !important;
-            will-change: transform !important;
-            pointer-events: auto !important;
-          }
-          .vg-widget-button {
-            width: 48px !important;
-            height: 48px !important;
-            margin: 0 !important;
-            transform: translateZ(0) !important;
-            will-change: transform !important;
-            transition: transform 0.2s ease-in-out !important;
-          }
-          .vg-widget-button:hover {
-            transform: scale(1.1) translateZ(0) !important;
-          }
-          @media (max-width: 640px) {
-            .vg-widget-container {
-              bottom: max(env(safe-area-inset-bottom, 16px), 16px) !important;
-              right: max(env(safe-area-inset-right, 16px), 16px) !important;
-            }
-          }
-        \`;
-        document.head.appendChild(style);
+        // Create TixaeAgent script
+        const tixaeScript = document.createElement('script');
+        tixaeScript.setAttribute('data-tixae-main', 'exclusive');
+        tixaeScript.type = 'text/javascript';
+        tixaeScript.src = 'https://vg-bunny-cdn.b-cdn.net/vg_live_build/vg_bundle.js';
+        tixaeScript.defer = true;
+        
+        tixaeScript.onload = function() {
+          console.log('✅ TixaeAgent script loaded for non-Demo1 page');
+        };
 
-        var VG_SCRIPT = document.createElement("script");
-        VG_SCRIPT.src = "https://vg-bunny-cdn.b-cdn.net/vg_live_build/vg_bundle.js";
-        document.body.appendChild(VG_SCRIPT);
-      })()
-    `;
-    document.body.appendChild(script);
+        tixaeScript.onerror = function() {
+          console.error('❌ Failed to load TixaeAgent script');
+        };
 
-    // Cleanup function
-    return () => {
-      if (script && script.parentNode) {
-        script.parentNode.removeChild(script);
+        document.body.appendChild(tixaeScript);
+        console.log('📝 ONLY TixaeAgent script added to non-Demo1 page - Voiceflow BLOCKED');
       }
-      // Don't remove the container on cleanup as it's reused
+    }, 400); // Increased timeout for thorough cleanup
+
+    // Cleanup function when route changes
+    return () => {
+      clearTimeout(initTimer);
+      console.log('🔄 TixaeProvider cleanup on route change');
     };
-  }, [isDashboard, isDemo]);
+  }, [location.pathname, isDemo1]);
 
   return (
     <TixaeContext.Provider value={{ isDemo }}>

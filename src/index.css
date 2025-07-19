@@ -18,6 +18,9 @@
     width: 100%;
     position: relative;
     min-height: -webkit-fill-available; /* Fix for mobile Chrome viewport height */
+    /* Ensure no margin/padding that could cause gaps */
+    margin: 0;
+    padding: 0;
   }
 
   /* Fix for mobile Chrome 100vh issue */
@@ -25,6 +28,13 @@
     .min-h-screen {
       min-height: -webkit-fill-available;
     }
+  }
+
+  /* Ensure no gaps at the top of the page */
+  #root {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
   }
 }
 
@@ -65,6 +75,15 @@
       padding-right: env(safe-area-inset-right);
       padding-bottom: env(safe-area-inset-bottom);
     }
+  }
+
+  /* Ensure fixed elements stick to the very top */
+  .fixed-top {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
   }
 }
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Menu, X, ExternalLink } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -8,10 +8,22 @@ import CountdownBanner from './CountdownBanner';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { currentLanguage } = useLanguage();
   const { t } = useTranslatedContent();
+
+  // Track scroll position to handle navbar positioning
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      setIsScrolled(scrollPosition > 0);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const navItems = [
     { id: 'services', name: t['services'], href: '#services' },
@@ -49,9 +61,16 @@ const Navbar = () => {
   };
 
   return (
-    <>
+    <div className="fixed w-full z-50 top-0">
+      {/* Countdown Banner */}
       <CountdownBanner language={currentLanguage} />
-      <nav className="fixed w-full z-50 bg-black/80 backdrop-blur-md">
+      
+      {/* Main Navigation */}
+      <nav className={`w-full transition-all duration-300 ${
+        isScrolled 
+          ? 'bg-black/90 backdrop-blur-md shadow-lg' 
+          : 'bg-black/80 backdrop-blur-md'
+      }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
@@ -160,7 +179,7 @@ const Navbar = () => {
           </div>
         )}
       </nav>
-    </>
+    </div>
   );
 };
 
