@@ -33,6 +33,6 @@ jobs:
       - name: Upload to Strato
         run: |
           echo "Uploading project to Strato server..."
-          sshpass -p "${{ secrets.STRATO_FTP_PASS }}" sftp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${{ secrets.STRATO_FTP_USER }}@${{ secrets.STRATO_FTP_HOST }}:/website/" <<EOF
+          sshpass -p "${{ secrets.STRATO_FTP_PASS }}" sftp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null "${{ secrets.STRATO_FTP_USER }}@${{ secrets.STRATO_FTP_HOST }}:/" <<EOF
             put -r *
           EOF
