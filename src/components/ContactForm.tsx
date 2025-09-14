@@ -2,24 +2,18 @@ import React, { useState } from 'react';
 import { ArrowLeft, CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { submitToAirtable } from '../services/airtable';
+import { submitContactForm, ContactFormData } from '../services/contacts';
 import { useLanguage } from '../contexts/LanguageContext';
-
-interface FormData {
-  fullName: string;
-  email: string;
-  inquiry: string;
-}
 
 const ContactForm: React.FC = () => {
   const { currentLanguage } = useLanguage();
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<ContactFormData>({
     fullName: '',
     email: '',
-    inquiry: ''
+    message: ''
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -28,7 +22,7 @@ const ContactForm: React.FC = () => {
     setError(null);
 
     try {
-      await submitToAirtable(formData);
+      await submitContactForm(formData);
       setIsSubmitted(true);
     } catch (err: any) {
       const errorMessage = err instanceof Error ? err.message : currentLanguage === 'de'
@@ -167,10 +161,10 @@ const ContactForm: React.FC = () => {
                 {translations.inquiry} *
               </label>
               <textarea
-                id="inquiry"
-                name="inquiry"
+                id="message"
+                name="message"
                 required
-                value={formData.inquiry}
+                value={formData.message}
                 onChange={handleChange}
                 rows={6}
                 className="w-full px-4 py-3 bg-black/50 border border-purple-500/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 text-white placeholder-gray-500 resize-none"
