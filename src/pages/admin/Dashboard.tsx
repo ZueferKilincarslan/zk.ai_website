@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
-import { LogOut, Users, MessageSquare, Calendar, Store, LayoutGrid as Layout, Plus, Trash2, Clock } from 'lucide-react'react';
+import { LogOut, Users, MessageSquare, Calendar, Store, LayoutGrid as Layout, Plus, Trash2, Clock } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../services/supabase';
