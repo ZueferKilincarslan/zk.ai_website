@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
-import { LogOut, Users, MessageSquare, Calendar, Store, Layout, Plus, Trash2, Clock } from 'lucide-react';
+import { LogOut, Users, MessageSquare, Calendar, Store, LayoutGrid as Layout, Plus, Trash2, Clock } from 'lucide-react'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../services/supabase';
-import { getContacts } from '../../services/contacts';
 
 interface Countdown {
   id: string;
@@ -26,6 +25,8 @@ const Dashboard: React.FC = () => {
   const { signOut, lastLoginTime } = useAuth();
   const navigate = useNavigate();
   const [countdowns, setCountdowns] = useState<Countdown[]>([]);
+  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [contactsLoading, setContactsLoading] = useState(false);
   const [newCountdown, setNewCountdown] = useState({
     title: '',
     target_date: ''
@@ -45,6 +46,7 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     fetchCountdowns();
+    fetchContacts();
 
     const subscription = supabase
       .channel('countdowns_admin')
@@ -410,36 +412,14 @@ const Dashboard: React.FC = () => {
         </div>
 
         <div className="bg-black/30 backdrop-blur-lg rounded-xl p-8 border border-purple-500/20">
-          <h2 className="text-2xl font-bold mb-6">Admin Tools</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {adminPages.map((page, index) => (
-              <motion.div
-                key={page.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="group bg-black/40 rounded-xl p-6 hover:bg-black/50 transition-all duration-300 cursor-pointer"
-                onClick={() => navigate(page.path)}
-              >
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-lg bg-purple-500/20 flex items-center justify-center">
-                    <page.icon className="w-6 h-6 text-purple-400" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold group-hover:text-purple-400 transition-colors">
-                      {page.title}
-                    </h3>
-                    <p className="text-gray-400 mt-1">{page.description}</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+          <h2 className="text-2xl font-bold mb-6">Demo Sites</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {demos.map((demo, index) => (
               <motion.div
                 key={demo.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: (adminPages.length + index) * 0.1 }}
+                transition={{ delay: index * 0.1 }}
                 className="group bg-black/40 rounded-xl p-6 hover:bg-black/50 transition-all duration-300 cursor-pointer"
                 onClick={() => openDemoInNewTab(demo.path)}
               >
