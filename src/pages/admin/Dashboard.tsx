@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
-import { LogOut, Users, MessageSquare, Calendar, Store, Layout, Plus, Trash2, Clock } from 'lucide-react';
+import { LogOut, Users, MessageSquare, Calendar, Store, LayoutGrid as Layout, Plus, Trash2, Clock } from 'lucide-react'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../services/supabase';
@@ -13,10 +13,20 @@ interface Countdown {
   is_active: boolean;
 }
 
+interface Contact {
+  id: string;
+  full_name: string;
+  email: string;
+  message: string;
+  created_at: string;
+}
+
 const Dashboard: React.FC = () => {
   const { signOut, lastLoginTime } = useAuth();
   const navigate = useNavigate();
   const [countdowns, setCountdowns] = useState<Countdown[]>([]);
+  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [contactsLoading, setContactsLoading] = useState(false);
   const [newCountdown, setNewCountdown] = useState({
     title: '',
     target_date: ''
@@ -36,6 +46,7 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     fetchCountdowns();
+    fetchContacts();
 
     const subscription = supabase
       .channel('countdowns_admin')
@@ -95,6 +106,18 @@ const Dashboard: React.FC = () => {
     }
 
     setCountdowns(data || []);
+  };
+
+  const fetchContacts = async () => {
+    setContactsLoading(true);
+    try {
+      const contactsData = await getContacts();
+      setContacts(contactsData);
+    } catch (error) {
+      console.error('Error fetching contacts:', error);
+    } finally {
+      setContactsLoading(false);
+    }
   };
 
   const handleSignOut = async () => {
@@ -190,7 +213,7 @@ const Dashboard: React.FC = () => {
   };
 
   const stats = [
-    { icon: Users, label: 'Total Users', value: '1,234' },
+    { icon: Users, label: 'Total Contacts', value: contacts.length.toString() },
     { icon: MessageSquare, label: 'Active Chats', value: '56' },
     { icon: Calendar, label: 'Appointments', value: '23' },
   ];
@@ -326,6 +349,46 @@ const Dashboard: React.FC = () => {
           </div>
         </motion.div>
 
+        {/* Contacts Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-black/30 backdrop-blur-lg rounded-xl p-8 border border-purple-500/20 mb-8"
+        >
+          <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+            <MessageSquare className="w-6 h-6 text-purple-400" />
+            Recent Contacts
+          </h2>
+
+          {contactsLoading ? (
+            <div className="text-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-500 mx-auto"></div>
+            </div>
+          ) : (
+            <div className="space-y-4 max-h-96 overflow-y-auto">
+              {contacts.slice(0, 10).map((contact) => (
+                <motion.div
+                  key={contact.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex flex-col p-4 bg-black/20 rounded-lg"
+                >
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="font-medium">{contact.full_name}</h3>
+                    <span className="text-sm text-gray-400">
+                      {new Date(contact.created_at).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-400 mb-2">{contact.email}</p>
+                  <p className="text-sm text-gray-300">{contact.message}</p>
+                </motion.div>
+              ))}
+              {contacts.length === 0 && (
+                <p className="text-center text-gray-400">No contacts yet</p>
+              )}
+            </div>
+          )}
+        </motion.div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {stats.map((stat, index) => (
             <motion.div

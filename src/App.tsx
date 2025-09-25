@@ -8,6 +8,7 @@ import Login from './pages/admin/Login';
 import Dashboard from './pages/admin/Dashboard';
 import Demo1 from './pages/admin/Demo1';
 import Demo2 from './pages/admin/Demo2';
+import Kontaktformular from './pages/admin/Kontaktformular';
 
 // English pages
 import HomeEN from './pages/en/Home';
